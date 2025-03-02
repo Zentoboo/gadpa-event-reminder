@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-function ReminderForm({ addReminder, editingReminder, updateReminder }) {
+function ReminderForm({ addReminder, editingReminder, updateReminder, cancelEditing }) {
   const [formData, setFormData] = useState({
     activity: '',
     deadline: '',
-    department_responsible: ''
+    department_responsible: '',
+    event: 'General' // Default event value
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (editingReminder) {
@@ -16,7 +19,16 @@ function ReminderForm({ addReminder, editingReminder, updateReminder }) {
       setFormData({
         activity: editingReminder.activity,
         deadline: formattedDeadline,
-        department_responsible: editingReminder.department_responsible
+        department_responsible: editingReminder.department_responsible,
+        event: editingReminder.event || 'General'
+      });
+    } else {
+      // Reset form when not editing
+      setFormData({
+        activity: '',
+        deadline: '',
+        department_responsible: '',
+        event: 'General'
       });
     }
   }, [editingReminder]);
@@ -28,26 +40,48 @@ function ReminderForm({ addReminder, editingReminder, updateReminder }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.activity || !formData.deadline || !formData.department_responsible) {
-      alert('Please fill in all fields');
+      alert('Please fill in all required fields');
       return;
     }
 
-    if (editingReminder) {
-      updateReminder(editingReminder.id, formData);
-    } else {
-      addReminder(formData);
-    }
+    setIsSubmitting(true);
+    let success = false;
 
-    // Reset the form
+    try {
+      if (editingReminder) {
+        success = await updateReminder(editingReminder.id, formData);
+      } else {
+        success = await addReminder(formData);
+      }
+
+      // Only reset the form if submission was successful
+      if (success) {
+        setFormData({
+          activity: '',
+          deadline: '',
+          department_responsible: '',
+          event: 'General'
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
     setFormData({
       activity: '',
       deadline: '',
-      department_responsible: ''
+      department_responsible: '',
+      event: 'General'
     });
+    cancelEditing();
   };
 
   return (
@@ -55,7 +89,7 @@ function ReminderForm({ addReminder, editingReminder, updateReminder }) {
       <h2>{editingReminder ? 'Edit Reminder' : 'Add New Reminder'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="activity">Activity</label>
+          <label htmlFor="activity">Activity*</label>
           <input
             type="text"
             id="activity"
@@ -63,20 +97,22 @@ function ReminderForm({ addReminder, editingReminder, updateReminder }) {
             value={formData.activity}
             onChange={handleChange}
             placeholder="Enter activity"
+            required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="deadline">Deadline</label>
+          <label htmlFor="deadline">Deadline*</label>
           <input
             type="datetime-local"
             id="deadline"
             name="deadline"
             value={formData.deadline}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="department_responsible">Department Responsible</label>
+          <label htmlFor="department_responsible">Department Responsible*</label>
           <input
             type="text"
             id="department_responsible"
@@ -84,21 +120,32 @@ function ReminderForm({ addReminder, editingReminder, updateReminder }) {
             value={formData.department_responsible}
             onChange={handleChange}
             placeholder="Enter department responsible"
+            required
           />
         </div>
-        <button type="submit">{editingReminder ? 'Update Reminder' : 'Add Reminder'}</button>
+        <div className="form-group">
+          <label htmlFor="event">Event</label>
+          <input
+            type="text"
+            id="event"
+            name="event"
+            value={formData.event}
+            onChange={handleChange}
+            placeholder="Enter event name"
+          />
+        </div>
+        <button 
+          type="submit" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Processing...' : (editingReminder ? 'Update' : 'Add')}
+        </button>
         {editingReminder && (
           <button 
             type="button" 
-            onClick={() => {
-              setFormData({
-                activity: '',
-                deadline: '',
-                department_responsible: ''
-              });
-              // Call a function to cancel editing (you'd need to pass this from App.jsx)
-            }}
+            onClick={handleCancel}
             className="cancel-btn"
+            disabled={isSubmitting}
           >
             Cancel
           </button>

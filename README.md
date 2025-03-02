@@ -65,4 +65,7 @@ reminder-app/
 
 - [ ] Email notifications for approaching deadlines
 - [ ] Dark/light theme toggle
+- [ ] Make the edits exist on the schedule table itself
+- [ ] Make it so that user is able to add a json file or excel file into the web and make additions on the database.
+- [ ] Make the web more reactive.
 - idk

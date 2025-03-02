@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 
 // Create a reminder
 router.post('/', async (req, res) => {
-    const { activity, deadline, department_responsible } = req.body;
+    const { activity, deadline, department_responsible, event } = req.body;
 
     if (!activity || !deadline || !department_responsible) {
         return res.status(400).json({ message: 'Please provide all required fields' });
@@ -39,8 +39,8 @@ router.post('/', async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'INSERT INTO reminders (activity, deadline, department_responsible) VALUES (?, ?, ?)',
-            [activity, deadline, department_responsible]
+            'INSERT INTO reminders (activity, deadline, department_responsible, event) VALUES (?, ?, ?, ?)',
+            [activity, deadline, department_responsible, event || 'General']
         );
 
         const newReminderId = result.insertId;
@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
 
 // Update a reminder
 router.put('/:id', async (req, res) => {
-    const { activity, deadline, department_responsible } = req.body;
+    const { activity, deadline, department_responsible, event } = req.body;
     const reminderId = req.params.id;
 
     if (!activity || !deadline || !department_responsible) {
@@ -64,8 +64,8 @@ router.put('/:id', async (req, res) => {
 
     try {
         const [result] = await db.query(
-            'UPDATE reminders SET activity = ?, deadline = ?, department_responsible = ? WHERE id = ?',
-            [activity, deadline, department_responsible, reminderId]
+            'UPDATE reminders SET activity = ?, deadline = ?, department_responsible = ?, event = ? WHERE id = ?',
+            [activity, deadline, department_responsible, event || 'General', reminderId]
         );
 
         if (result.affectedRows === 0) {

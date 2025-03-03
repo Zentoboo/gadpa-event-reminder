@@ -289,11 +289,11 @@ td {
   text-overflow: ellipsis;
 }
 
-/* Header and Column Settings Styles */
+/* Reminder header with record control styling - bottom alignment */
 .reminder-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-bottom: 16px;
   width: 100%;
 }
@@ -301,15 +301,63 @@ td {
 .schedule-title {
   margin: 0;
   text-align: left;
+  white-space: nowrap;
+  line-height: 1.2;
+  padding-bottom: 2px;
 }
 
+/* Records indicator with input styling */
+.records-indicator {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 auto 0 16px;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.record-limit-input {
+  width: 50px;
+  height: 28px;
+  margin: 0 6px;
+  padding: 2px 6px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.record-limit-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue-hover);
+}
+
+/* Hide number input arrows */
+.record-limit-input::-webkit-outer-spin-button,
+.record-limit-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.record-limit-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Column settings button */
 .column-settings-btn {
   background-color: var(--accent-blue);
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  margin-left: auto;
+  margin-left: 16px;
+  white-space: nowrap;
+  height: 32px;
+  box-sizing: border-box;
 }
 
 .column-settings-btn:hover {
@@ -410,6 +458,23 @@ td {
   margin-top: 30px;
 }
 
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .reminder-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .records-indicator {
+    margin-left: 0;
+  }
+
+  .column-settings-btn {
+    margin-left: 0;
+  }
+}
+
 /* Utility Classes */
 .flex {
   display: flex;
@@ -439,7 +504,7 @@ td {
   margin-bottom: 8px;
 }
 
-.mb-4 {
+.mb-4 { 
   margin-bottom: 16px;
 }
 

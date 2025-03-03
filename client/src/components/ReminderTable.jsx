@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ColumnSettings from './ColumnSettings';
 
 function ReminderTable({ reminders, onDelete, onEdit }) {
@@ -17,12 +17,43 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
   
   // State for column settings modal
   const [showColumnSettings, setShowColumnSettings] = useState(false);
+  
+  // State for record display limit
+  const [recordLimit, setRecordLimit] = useState(10);
+  const [inputValue, setInputValue] = useState("10");
 
   // State for sorting
   const [sortConfig, setSortConfig] = useState({
     key: 'deadline',
     direction: 'asc',
   });
+
+  // Handle record limit change
+  const handleRecordLimitChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  // Handle record limit input blur or Enter key
+  const handleRecordLimitSubmit = () => {
+    let newLimit = parseInt(inputValue, 10);
+    
+    // Validate the input
+    if (isNaN(newLimit) || newLimit < 1) {
+      newLimit = 1;
+    } else if (newLimit > reminders.length) {
+      newLimit = reminders.length;
+    }
+    
+    setRecordLimit(newLimit);
+    setInputValue(newLimit.toString());
+  };
+
+  // Handle key press for Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleRecordLimitSubmit();
+    }
+  };
 
   // Handle sort
   const handleSort = (key) => {
@@ -43,6 +74,9 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
     }
     return 0;
   });
+  
+  // Apply record limit
+  const limitedData = sortedData.slice(0, recordLimit);
 
   // Toggle column visibility
   const toggleColumnVisibility = (columnId) => {
@@ -89,6 +123,23 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
     <div className="reminder-list">
       <div className="reminder-header">
         <h2 className="schedule-title">Schedule</h2>
+        
+        <div className="records-indicator">
+          <span>Show </span>
+          <input 
+            type="number"
+            min="1"
+            max={reminders.length}
+            value={inputValue}
+            onChange={handleRecordLimitChange}
+            onBlur={handleRecordLimitSubmit}
+            onKeyPress={handleKeyPress}
+            className="record-limit-input"
+            aria-label="Number of records to display"
+          />
+          <span> out of {reminders.length}</span>
+        </div>
+        
         <button
           onClick={() => setShowColumnSettings(!showColumnSettings)}
           className="column-settings-btn"
@@ -135,7 +186,7 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
               </tr>
             </thead>
             <tbody>
-              {sortedData.map((reminder) => (
+              {limitedData.map((reminder) => (
                 <tr 
                   key={reminder.id}
                   className={`reminder-item ${isDeadlineApproaching(reminder.deadline) ? 'approaching' : ''} 
@@ -174,9 +225,6 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
               ))}
             </tbody>
           </table>
-          <div className="mt-2 text-sm text-gray-400">
-            Showing {sortedData.length} records
-          </div>
         </div>
       )}
     </div>

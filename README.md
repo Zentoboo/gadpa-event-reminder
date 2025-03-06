@@ -68,4 +68,5 @@ reminder-app/
 - [ ] Make the edits exist on the schedule table itself
 - [ ] Make it so that user is able to add a json file or excel file into the web and make additions on the database.
 - [ ] Make the web more reactive.
+- [x] Enable users proper modification on table columns and other display options.
 - idk

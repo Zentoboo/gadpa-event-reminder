@@ -197,7 +197,7 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
                     .map((column) => {
                       if (column.id === 'deadline') {
                         return (
-                          <td key={`${reminder.id}-${column.id}`} title={formatDate(reminder.deadline)}>
+                          <td key={`${reminder.id}-${column.id}`}>
                             {formatDate(reminder.deadline)}
                             {isDeadlineApproaching(reminder.deadline) && <span className="deadline-alert"> (Soon!)</span>}
                             {isDeadlinePast(reminder.deadline) && <span className="deadline-past"> (Overdue!)</span>}
@@ -205,13 +205,13 @@ function ReminderTable({ reminders, onDelete, onEdit }) {
                         );
                       } else if (column.id === 'created_at') {
                         return (
-                          <td key={`${reminder.id}-${column.id}`} title={formatDate(reminder.created_at)}>
+                          <td key={`${reminder.id}-${column.id}`}>
                             {formatDate(reminder.created_at)}
                           </td>
                         );
                       } else {
                         return (
-                          <td key={`${reminder.id}-${column.id}`} title={reminder[column.id]}>
+                          <td key={`${reminder.id}-${column.id}`}>
                             {reminder[column.id]}
                           </td>
                         );

@@ -193,11 +193,13 @@ td {
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
   position: relative;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
-  height: 58px;
+  word-wrap: break-word;
+  word-break: normal;
+  min-width: 100px;
+  height: auto;
+  min-height: 58px;
   box-sizing: border-box;
+  line-height: 1.4;
 }
 
 th {
@@ -211,7 +213,8 @@ th {
 tbody tr {
   background-color: var(--bg-table);
   transition: background-color 0.2s;
-  height: 58px;
+  height: auto;
+  min-height: 58px;
   line-height: normal;
 }
 
@@ -284,9 +287,8 @@ tbody tr:hover {
 
 /* Table Cell Treatment */
 td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
 }
 
 /* Reminder header with record control styling - bottom alignment */
